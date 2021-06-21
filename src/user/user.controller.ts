@@ -7,6 +7,7 @@ import {
   Post,
   Body,
   Put,
+  NotFoundException,
 } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
 import { User } from './user.entity';
@@ -22,8 +23,13 @@ export class UserController {
   }
 
   @Get(':id')
-  getOne(@Param('id') id): Promise<User> {
-    return this.service.getOne(id);
+  async getOne(@Param('id') id): Promise<User> {
+    const result = await this.service.getOne(id);
+    if (result) {
+      return result;
+    } else {
+      throw new NotFoundException();
+    }
   }
 
   @Delete(':id')
