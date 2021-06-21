@@ -10,6 +10,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { ApplicationModule } from './application/application.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
       autoLoadEntities: true,
     }),
     UserModule,
+    ApplicationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
