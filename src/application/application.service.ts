@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { Application } from './application.entity';
 import { CreateApplicationDTO } from './dto/create-application.dto';
+import * as chalk from 'chalk';
+import { QueryListType } from 'src/types/QueryListType';
 
 @Injectable()
 export class ApplicationService {
@@ -11,12 +13,12 @@ export class ApplicationService {
     private repository: Repository<Application>,
   ) {}
 
-  findAll(
+  async findAll(
     page: number = 1,
-    size: number,
+    size: number = 10,
     creator: string,
     status: number,
-  ): Promise<Application[]> {
+  ): Promise<QueryListType> {
     let sql = 'select * from application where 2 > 1';
     if (creator) {
       sql += ` and creator like '%${creator}%'`;
@@ -25,13 +27,21 @@ export class ApplicationService {
       sql += ` and status = '${status}'`;
     }
 
-    if (size !== undefined) {
-      sql += ` limit ${size}  offset ${size * (page - 1)}`;
-    }
-
     sql += ` order by id`;
 
-    return this.repository.query(sql);
+    sql += ` limit ${size}  offset ${size * (page - 1)}`;
+
+    console.log(chalk.green(sql));
+
+    const total = await this.repository.count();
+    const items = await this.repository.query(sql);
+
+    return {
+      total,
+      items,
+      page: Number(page),
+      size: Number(size),
+    };
   }
 
   getOne(id: number): Promise<Application> {

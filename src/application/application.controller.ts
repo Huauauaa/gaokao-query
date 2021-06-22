@@ -10,6 +10,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { QueryListType } from 'src/types/QueryListType';
 import { Application } from './application.entity';
 import { ApplicationService } from './application.service';
 import { CreateApplicationDTO } from './dto/create-application.dto';
@@ -22,7 +23,7 @@ export class ApplicationController {
 
   @ApiOperation({ summary: '应用列表' })
   @Get()
-  getApps(@Query() query: QueryApplicationDTO): Promise<Application[]> {
+  getApps(@Query() query: QueryApplicationDTO): Promise<QueryListType> {
     const { page, size, creator, status } = query;
     return this.service.findAll(page, size, creator, status);
   }
