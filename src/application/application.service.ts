@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
+import { Brackets, DeleteResult, Repository } from 'typeorm';
 import { Application } from './application.entity';
 import { CreateApplicationDTO } from './dto/create-application.dto';
 import * as chalk from 'chalk';
 import { QueryListType } from 'src/types/QueryListType';
+import { stat } from 'fs';
 
 @Injectable()
 export class ApplicationService {
@@ -18,23 +19,39 @@ export class ApplicationService {
     size: number = 10,
     creator: string,
     status: number,
-  ): Promise<QueryListType> {
-    let sql = 'select * from application where 2 > 1';
-    if (creator) {
-      sql += ` and creator like '%${creator}%'`;
-    }
-    if (status !== undefined) {
-      sql += ` and status = '${status}'`;
-    }
-
-    sql += ` order by id`;
-
-    sql += ` limit ${size}  offset ${size * (page - 1)}`;
+  ): Promise<QueryListType<Application>> {
+    const qb = this.repository
+      .createQueryBuilder('application')
+      .where('1=1')
+      .andWhere(
+        new Brackets(qb => {
+          if (creator) {
+            qb.where(`application.creator like '%${creator}%'`);
+          } else {
+            qb.where(`1=1`);
+          }
+        }),
+      )
+      .andWhere(
+        new Brackets(qb => {
+          if (status !== undefined) {
+            qb.where('application.status = :status', {
+              status,
+            });
+          } else {
+            qb.where(`1=1`);
+          }
+        }),
+      )
+      .orderBy('application.id')
+      .limit(size)
+      .offset(size * (page - 1));
+    const sql = qb.getSql();
 
     console.log(chalk.green(sql));
 
-    const total = await this.repository.count();
-    const items = await this.repository.query(sql);
+    const total = await qb.getCount();
+    const items = await qb.getMany();
 
     return {
       total,

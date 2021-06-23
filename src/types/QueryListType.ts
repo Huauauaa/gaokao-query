@@ -1,6 +1,6 @@
-export interface QueryListType {
+export interface QueryListType<T> {
   total: number;
-  items: [];
+  items: T[];
   page: number;
   size: number;
 }

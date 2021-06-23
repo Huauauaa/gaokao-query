@@ -23,7 +23,9 @@ export class ApplicationController {
 
   @ApiOperation({ summary: '应用列表' })
   @Get()
-  getApps(@Query() query: QueryApplicationDTO): Promise<QueryListType> {
+  getApps(
+    @Query() query: QueryApplicationDTO,
+  ): Promise<QueryListType<Application>> {
     const { page, size, creator, status } = query;
     return this.service.findAll(page, size, creator, status);
   }
