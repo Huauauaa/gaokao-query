@@ -43,7 +43,7 @@ export class ApplicationService {
           }
         }),
       )
-      .orderBy('application.id')
+      .orderBy('application.id', 'DESC')
       .limit(size)
       .offset(size * (page - 1));
     const sql = qb.getSql();
