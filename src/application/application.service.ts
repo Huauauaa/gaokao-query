@@ -5,7 +5,6 @@ import { Application } from './application.entity';
 import { CreateApplicationDTO } from './dto/create-application.dto';
 import * as chalk from 'chalk';
 import { QueryListType } from 'src/types/QueryListType';
-import { stat } from 'fs';
 
 @Injectable()
 export class ApplicationService {

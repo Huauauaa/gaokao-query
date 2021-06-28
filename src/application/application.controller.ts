@@ -8,8 +8,10 @@ import {
   Post,
   Put,
   Query,
+  UsePipes,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ValidationPipe } from 'src/pipes/validate.pipe';
 import { QueryListType } from 'src/types/QueryListType';
 import { Application } from './application.entity';
 import { ApplicationService } from './application.service';
@@ -43,8 +45,20 @@ export class ApplicationController {
 
   @ApiOperation({ summary: '添加应用' })
   @Post()
+  @UsePipes(ValidationPipe)
   create(@Body() payload: CreateApplicationDTO) {
-    return this.service.create(payload);
+    return this.service.create(
+      Object.assign(
+        {},
+        {
+          name: '',
+          creator: '',
+          description: '',
+          status: 0,
+        },
+        payload,
+      ),
+    );
   }
 
   @ApiOperation({ summary: '删除应用' })
@@ -56,6 +70,18 @@ export class ApplicationController {
   @ApiOperation({ summary: '修改应用' })
   @Put(':id')
   update(@Param('id') id: number, @Body() payload: Application) {
-    return this.service.update(id, payload);
+    return this.service.update(
+      id,
+      Object.assign(
+        {},
+        {
+          name: '',
+          creator: '',
+          description: '',
+          status: 0,
+        },
+        payload,
+      ),
+    );
   }
 }
