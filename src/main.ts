@@ -7,6 +7,7 @@ import * as internalIp from 'internal-ip';
 const ipv4 = internalIp.v4.sync();
 import { count } from './middlewares/count.middleware';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
+import { AuthGuard } from './guards/auth.guard';
 
 const port = process.env.SERVER_PORT || 3000;
 
@@ -14,6 +15,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(count);
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  app.useGlobalGuards(new AuthGuard());
 
   const config = new DocumentBuilder()
     .setTitle('API')

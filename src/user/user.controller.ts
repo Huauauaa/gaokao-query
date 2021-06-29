@@ -8,8 +8,10 @@ import {
   Body,
   Put,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { RolesGuard } from 'src/guards/roles.guard';
 import { DeleteResult } from 'typeorm';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { QueryUserDTO } from './dto/query-user.dto';
@@ -18,6 +20,7 @@ import { UserService } from './user.service';
 
 @ApiTags('user')
 @Controller('user')
+@UseGuards(RolesGuard)
 export class UserController {
   constructor(private readonly service: UserService) {}
 
