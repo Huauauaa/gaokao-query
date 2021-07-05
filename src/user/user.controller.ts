@@ -10,16 +10,19 @@ import {
   NotFoundException,
   UseGuards,
   SetMetadata,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RolesGuard } from 'src/guards/roles.guard';
+import { LoggingInterceptor } from 'src/interceptors/logging.interceptor';
+import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
 import { DeleteResult } from 'typeorm';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { QueryUserDTO } from './dto/query-user.dto';
 import { User } from './user.entity';
 import { UserService } from './user.service';
-
+@UseInterceptors(LoggingInterceptor, TransformInterceptor)
 @ApiTags('user')
 @Controller('user')
 @UseGuards(RolesGuard)
