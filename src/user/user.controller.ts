@@ -9,8 +9,10 @@ import {
   Put,
   NotFoundException,
   UseGuards,
+  SetMetadata,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/decorators/roles.decorator';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { DeleteResult } from 'typeorm';
 import { CreateUserDTO } from './dto/create-user.dto';
@@ -26,6 +28,7 @@ export class UserController {
 
   @ApiOperation({ summary: '获取用户列表' })
   @Get()
+  @Roles('admin')
   getAll(@Query() query: QueryUserDTO): Promise<User[]> {
     const { page, size } = query;
     return this.service.getAll(page, size);
@@ -50,6 +53,7 @@ export class UserController {
 
   @ApiOperation({ summary: '添加用户' })
   @Post()
+  @SetMetadata('roles', ['admin'])
   create(@Body() user: CreateUserDTO) {
     return this.service.create(user);
   }
