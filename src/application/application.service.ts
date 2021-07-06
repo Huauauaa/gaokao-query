@@ -5,6 +5,7 @@ import { Application } from './application.entity';
 import { CreateApplicationDTO } from './dto/create-application.dto';
 import * as chalk from 'chalk';
 import { QueryListType } from 'src/types/QueryListType';
+import { AppStatus } from 'src/utils/enum';
 
 @Injectable()
 export class ApplicationService {
@@ -12,6 +13,25 @@ export class ApplicationService {
     @InjectRepository(Application)
     private repository: Repository<Application>,
   ) {}
+
+  async stat() {
+    const result = await this.repository
+      .createQueryBuilder('application')
+      .select('application.status as status')
+      .addSelect('COUNT(*) as count')
+      .groupBy('application.status')
+      .getRawMany();
+
+    const total = result.reduce((res, cur) => (res += Number(cur.count)), 0);
+
+    return result
+      .map(item => ({
+        ...item,
+        value: Number(item.count),
+        label: AppStatus[item.status],
+      }))
+      .concat({ status: -1, value: total, label: '全部应用' });
+  }
 
   async findAll(
     page: number = 1,
