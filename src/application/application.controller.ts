@@ -32,6 +32,12 @@ export class ApplicationController {
     return this.service.findAll(page, size, creator, status);
   }
 
+  @ApiOperation({ summary: '统计' })
+  @Get('stat')
+  getStat() {
+    return this.service.stat();
+  }
+
   @ApiOperation({ summary: '按ID获取应用' })
   @Get('/:id')
   async getOne(@Param('id') id: number): Promise<Application> {
