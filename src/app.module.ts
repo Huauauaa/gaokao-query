@@ -11,6 +11,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { ApplicationModule } from './application/application.module';
+import { ClusterModule } from './cluster/cluster.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ApplicationModule } from './application/application.module';
     }),
     UserModule,
     ApplicationModule,
+    ClusterModule,
   ],
   controllers: [AppController],
   providers: [AppService],
